@@ -1,0 +1,56 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="cancelar()">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>✏️ Editar Jogo</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-list lines="full">
+
+    <ion-item>
+      <ion-label position="floating">Título</ion-label>
+      <ion-input type="text" [(ngModel)]="titulo"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Plataforma</ion-label>
+      <ion-select [(ngModel)]="plataforma" interface="action-sheet">
+        <ion-select-option *ngFor="let p of plataformas" [value]="p.value">
+          {{ p.label }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Gênero</ion-label>
+      <ion-select [(ngModel)]="genero" interface="action-sheet">
+        <ion-select-option *ngFor="let g of generos" [value]="g.value">
+          {{ g.label }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Ano</ion-label>
+      <ion-input type="number" [(ngModel)]="ano"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Desenvolvedor</ion-label>
+      <ion-input type="text" [(ngModel)]="desenvolvedor"></ion-input>
+    </ion-item>
+
+  </ion-list>
+
+  <div class="ion-padding-top">
+    <ion-button expand="block" (click)="salvar()">Salvar</ion-button>
+    <ion-button expand="block" fill="outline" color="medium" (click)="cancelar()" class="ion-margin-top">
+      Cancelar
+    </ion-button>
+  </div>
+</ion-content>

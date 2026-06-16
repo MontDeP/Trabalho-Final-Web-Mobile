@@ -1,0 +1,63 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="cancelar()">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>⭐ Nova Avaliação</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-list lines="full">
+
+    <ion-item>
+      <ion-label>Jogo</ion-label>
+      <ion-select [(ngModel)]="jogoSelecionado" interface="action-sheet">
+        <ion-select-option *ngFor="let j of jogos" [value]="j.id">
+          {{ j.titulo }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Título *</ion-label>
+      <ion-input type="text" [(ngModel)]="titulo"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Descrição *</ion-label>
+      <ion-textarea [(ngModel)]="descricao" rows="4" auto-grow="true"></ion-textarea>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Nota: <strong>{{ nota }}/10</strong></ion-label>
+      <ion-range
+        [(ngModel)]="nota"
+        [min]="1"
+        [max]="10"
+        [step]="0.5"
+        [snaps]="true"
+        color="warning"
+        slot="end"
+        style="flex: 1; padding-left: 16px;">
+      </ion-range>
+    </ion-item>
+
+  </ion-list>
+
+  <div class="estrelas ion-padding-vertical ion-text-center">
+    {{ nota >= 1 ? '★' : '☆' }}{{ nota >= 2 ? '★' : '☆' }}{{ nota >= 3 ? '★' : '☆' }}
+    {{ nota >= 4 ? '★' : '☆' }}{{ nota >= 5 ? '★' : '☆' }}{{ nota >= 6 ? '★' : '☆' }}
+    {{ nota >= 7 ? '★' : '☆' }}{{ nota >= 8 ? '★' : '☆' }}{{ nota >= 9 ? '★' : '☆' }}
+    {{ nota >= 10 ? '★' : '☆' }}
+  </div>
+
+  <div class="ion-padding-top">
+    <ion-button expand="block" (click)="salvar()">Enviar Avaliação</ion-button>
+    <ion-button expand="block" fill="outline" color="medium" (click)="cancelar()" class="ion-margin-top">
+      Cancelar
+    </ion-button>
+  </div>
+</ion-content>

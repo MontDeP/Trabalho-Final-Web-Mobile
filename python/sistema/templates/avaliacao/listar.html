@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Avaliações{% endblock %}
+
+{% block conteudo %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>⭐ Avaliações</h2>
+    <a href="{% url 'nova_avaliacao' %}" class="btn btn-primary">+ Nova Avaliação</a>
+</div>
+
+<div class="row g-3">
+    {% for item in itens %}
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span class="fw-bold" style="color:#58a6ff;">{{ item.titulo }}</span>
+                <span class="badge" style="background-color:#f0a500; color:#000; font-size:.9rem;">
+                    ⭐ {{ item.nota }}
+                </span>
+            </div>
+            <div class="card-body">
+                <p class="card-text mb-2" style="color:#c9d1d9;">
+                    {{ item.descricao }}
+                </p>
+                <hr style="border-color:#30363d;">
+                <p class="card-text mb-1"><small>🎮 <strong>Jogo:</strong> {{ item.jogo }}</small></p>
+                <p class="card-text mb-1"><small>👤 <strong>Autor:</strong> {{ item.usuario.username }}</small></p>
+                <p class="card-text"><small>📅 {{ item.criado_em|date:"d/m/Y" }}</small></p>
+            </div>
+            <div class="card-footer d-flex gap-2">
+                <a href="{% url 'editar_avaliacao' item.pk %}" class="btn btn-sm btn-warning w-50">Editar</a>
+                <a href="{% url 'deletar_avaliacao' item.pk %}" class="btn btn-sm btn-danger w-50">Excluir</a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <p class="text-center text-muted">Nenhuma avaliação cadastrada ainda.</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

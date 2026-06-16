@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Jogos{% endblock %}
+
+{% block conteudo %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>🎮 Jogos Cadastrados</h2>
+    <a href="{% url 'novo_jogo' %}" class="btn btn-primary">+ Novo Jogo</a>
+</div>
+
+<div class="row g-3">
+    {% for item in itens %}
+    <div class="col-md-4">
+        <div class="card h-100">
+            {% if item.foto %}
+            <img src="{{ item.foto.url }}" class="card-img-top" alt="{{ item.titulo }}" style="height:180px; object-fit:cover;">
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title" style="color:#58a6ff;">{{ item.titulo }}</h5>
+                <p class="card-text mb-1"><small>📱 {{ item.get_plataforma_display }}</small></p>
+                <p class="card-text mb-1"><small>🎯 {{ item.get_genero_display }}</small></p>
+                <p class="card-text mb-1"><small>📅 {{ item.ano }}</small></p>
+                <p class="card-text"><small>🏢 {{ item.desenvolvedor }}</small></p>
+            </div>
+            <div class="card-footer d-flex gap-2">
+                <a href="{% url 'editar_jogo' item.pk %}" class="btn btn-sm btn-warning w-50">Editar</a>
+                <a href="{% url 'deletar_jogo' item.pk %}" class="btn btn-sm btn-danger w-50">Excluir</a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <p class="text-center text-muted">Nenhum jogo cadastrado ainda.</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
