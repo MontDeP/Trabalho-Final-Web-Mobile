@@ -15,11 +15,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # Libs
     'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
-    # Apps do projeto
     'jogo',
     'avaliacao',
 ]

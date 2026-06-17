@@ -45,8 +45,6 @@ class AvaliacaoAPITests(TestCase):
     def autenticar(self):
         self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.token.key}')
 
-    # --- Listagem (GET /avaliacao/api/) ---
-
     def test_listar_avaliacoes_sem_autenticacao(self):
         response = self.client.get('/avaliacao/api/')
         self.assertEqual(response.status_code, 200)
@@ -63,8 +61,6 @@ class AvaliacaoAPITests(TestCase):
         self.assertIn('nome_usuario', item)
         self.assertEqual(item['nome_usuario'], 'tester')
         self.assertEqual(item['titulo_jogo'], str(self.jogo))
-
-    # --- Criação (POST /avaliacao/api/) ---
 
     def test_criar_avaliacao_sem_autenticacao_retorna_401(self):
         response = self.client.post('/avaliacao/api/', avaliacao_payload(self.jogo), format='json')
@@ -96,8 +92,6 @@ class AvaliacaoAPITests(TestCase):
         response = self.client.post('/avaliacao/api/', payload, format='json')
         self.assertEqual(response.status_code, 400)
 
-    # --- Detalhe (GET /avaliacao/api/<id>/) ---
-
     def test_buscar_avaliacao_sem_autenticacao_retorna_401(self):
         response = self.client.get(f'/avaliacao/api/{self.avaliacao.pk}/')
         self.assertEqual(response.status_code, 401)
@@ -112,8 +106,6 @@ class AvaliacaoAPITests(TestCase):
         self.autenticar()
         response = self.client.get('/avaliacao/api/9999/')
         self.assertEqual(response.status_code, 404)
-
-    # --- Edição (PATCH /avaliacao/api/<id>/) ---
 
     def test_editar_avaliacao_sem_autenticacao_retorna_401(self):
         response = self.client.patch(f'/avaliacao/api/{self.avaliacao.pk}/', {'titulo': 'X'}, format='json')
@@ -131,8 +123,6 @@ class AvaliacaoAPITests(TestCase):
         self.assertEqual(self.avaliacao.titulo, 'Título Atualizado')
         self.assertEqual(float(self.avaliacao.nota), 7.5)
 
-    # --- Deleção (DELETE /avaliacao/api/<id>/) ---
-
     def test_deletar_avaliacao_sem_autenticacao_retorna_401(self):
         response = self.client.delete(f'/avaliacao/api/{self.avaliacao.pk}/')
         self.assertEqual(response.status_code, 401)
@@ -142,6 +132,89 @@ class AvaliacaoAPITests(TestCase):
         response = self.client.delete(f'/avaliacao/api/{self.avaliacao.pk}/')
         self.assertEqual(response.status_code, 204)
         self.assertEqual(Avaliacao.objects.count(), 0)
+
+
+class AvaliacaoOwnershipTests(TestCase):
+
+    def setUp(self):
+        self.dono  = User.objects.create_user(username='dono',  password='senha123')
+        self.outro = User.objects.create_user(username='outro', password='senha123')
+        self.staff = User.objects.create_user(username='staff', password='senha123', is_staff=True)
+
+        self.token_dono  = Token.objects.create(user=self.dono)
+        self.token_outro = Token.objects.create(user=self.outro)
+        self.token_staff = Token.objects.create(user=self.staff)
+
+        self.jogo = criar_jogo()
+        self.avaliacao = Avaliacao.objects.create(
+            titulo='Avaliação do Dono',
+            descricao='Desc.',
+            jogo=self.jogo,
+            usuario=self.dono,
+            nota=8.0,
+        )
+
+    def _auth(self, token):
+        client = APIClient()
+        client.credentials(HTTP_AUTHORIZATION=f'Token {token.key}')
+        return client
+
+    def test_dono_pode_editar_avaliacao(self):
+        client = self._auth(self.token_dono)
+        response = client.patch(f'/avaliacao/api/{self.avaliacao.pk}/', {'titulo': 'Editada'}, format='json')
+        self.assertEqual(response.status_code, 200)
+
+    def test_dono_pode_deletar_avaliacao(self):
+        client = self._auth(self.token_dono)
+        response = client.delete(f'/avaliacao/api/{self.avaliacao.pk}/')
+        self.assertEqual(response.status_code, 204)
+
+    def test_outro_usuario_nao_pode_editar_avaliacao_retorna_403(self):
+        client = self._auth(self.token_outro)
+        response = client.patch(f'/avaliacao/api/{self.avaliacao.pk}/', {'titulo': 'Invasão'}, format='json')
+        self.assertEqual(response.status_code, 403)
+
+    def test_outro_usuario_nao_pode_deletar_avaliacao_retorna_403(self):
+        client = self._auth(self.token_outro)
+        response = client.delete(f'/avaliacao/api/{self.avaliacao.pk}/')
+        self.assertEqual(response.status_code, 403)
+
+    def test_staff_pode_editar_avaliacao_de_outro_usuario(self):
+        client = self._auth(self.token_staff)
+        response = client.patch(f'/avaliacao/api/{self.avaliacao.pk}/', {'titulo': 'Staff Edit'}, format='json')
+        self.assertEqual(response.status_code, 200)
+
+    def test_staff_pode_deletar_avaliacao_de_outro_usuario(self):
+        client = self._auth(self.token_staff)
+        response = client.delete(f'/avaliacao/api/{self.avaliacao.pk}/')
+        self.assertEqual(response.status_code, 204)
+
+
+class AvaliacaoFiltroWebTests(TestCase):
+
+    def setUp(self):
+        self.usuario = User.objects.create_user(username='u1', password='senha123')
+        self.outro   = User.objects.create_user(username='u2', password='senha123')
+        jogo = criar_jogo()
+        Avaliacao.objects.create(titulo='AV U1', descricao='', jogo=jogo, usuario=self.usuario, nota=9.0)
+        Avaliacao.objects.create(titulo='AV U2', descricao='', jogo=jogo, usuario=self.outro,   nota=7.0)
+
+    def test_sem_filtro_retorna_todas_as_avaliacoes(self):
+        self.client.login(username='u1', password='senha123')
+        response = self.client.get('/avaliacao/')
+        self.assertEqual(len(response.context['itens']), 2)
+
+    def test_filtro_minhas_retorna_apenas_avaliacoes_do_usuario(self):
+        self.client.login(username='u1', password='senha123')
+        response = self.client.get('/avaliacao/?minhas=1')
+        titulos = [av.titulo for av in response.context['itens']]
+        self.assertIn('AV U1', titulos)
+        self.assertNotIn('AV U2', titulos)
+
+    def test_filtro_minhas_retorna_contexto_minhas_true(self):
+        self.client.login(username='u1', password='senha123')
+        response = self.client.get('/avaliacao/?minhas=1')
+        self.assertTrue(response.context['minhas'])
 
 
 class AvaliacaoModelTests(TestCase):

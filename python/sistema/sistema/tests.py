@@ -16,8 +16,6 @@ class LoginAPITests(TestCase):
             email='admin@example.com',
         )
 
-    # --- POST /autenticacao-api/ ---
-
     def test_login_com_credenciais_validas_retorna_200(self):
         response = self.client.post('/autenticacao-api/', {
             'username': 'admin',
