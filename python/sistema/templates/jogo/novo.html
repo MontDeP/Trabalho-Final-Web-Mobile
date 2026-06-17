@@ -7,7 +7,10 @@
 <div class="row justify-content-center">
     <div class="col-md-6">
         <div class="card p-4">
-            <h2 class="mb-4" style="color:#58a6ff;">🎮 Novo Jogo</h2>
+            <div class="d-flex align-items-center gap-2 mb-4">
+                <img src="{% static 'img/logo.svg' %}" alt="Logo" height="36">
+                <h2 class="mb-0 logo-text fw-bold">Novo Jogo</h2>
+            </div>
             <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{ form.as_p }}

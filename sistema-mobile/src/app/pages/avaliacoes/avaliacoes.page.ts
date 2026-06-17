@@ -12,6 +12,15 @@ import { AvaliacaoService, Avaliacao } from '../../services/avaliacao.service';
 export class AvaliacoesPage implements OnInit {
   itens: Avaliacao[] = [];
   carregando = true;
+  usuarioId: number | null = null;
+  mostrarMinhas = false;
+
+  get itensFiltrados(): Avaliacao[] {
+    if (this.mostrarMinhas) {
+      return this.itens.filter(av => av.usuario === this.usuarioId);
+    }
+    return this.itens;
+  }
 
   constructor(
     private storage: Storage,
@@ -24,6 +33,9 @@ export class AvaliacoesPage implements OnInit {
     const token = await this.storage.get('token');
     if (!token) { this.navCtrl.navigateRoot('/home'); return; }
 
+    const usuario = await this.storage.get('usuario');
+    if (usuario) { this.usuarioId = usuario.id; }
+
     this.avaliacaoService.listar(token).subscribe({
       next: (dados) => { this.itens = dados; this.carregando = false; },
       error: () => { this.carregando = false; }
@@ -32,6 +44,10 @@ export class AvaliacoesPage implements OnInit {
 
   voltar() {
     this.navCtrl.navigateBack('/lista');
+  }
+
+  toggleMinhas() {
+    this.mostrarMinhas = !this.mostrarMinhas;
   }
 
   novaAvaliacao() {

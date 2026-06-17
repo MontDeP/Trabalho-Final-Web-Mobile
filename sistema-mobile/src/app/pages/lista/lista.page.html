@@ -1,7 +1,15 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>🎮 Jogos</ion-title>
+    <ion-title>
+      <div class="toolbar-logo">
+        <img src="assets/logo.svg" alt="Logo">
+        <span class="gradient-title">Catálogo de Jogos</span>
+      </div>
+    </ion-title>
     <ion-buttons slot="end">
+      <ion-button (click)="toggleMeus()" [color]="mostrarMeus ? 'primary' : 'medium'">
+        <ion-icon name="person-outline" slot="icon-only"></ion-icon>
+      </ion-button>
       <ion-button (click)="verAvaliacoes()">
         <ion-icon name="star-outline" slot="icon-only"></ion-icon>
       </ion-button>
@@ -17,11 +25,11 @@
 
   <div *ngIf="!carregando; else loading">
 
-    <p *ngIf="itens.length === 0" class="ion-text-center" style="color: var(--ion-color-medium);">
-      Nenhum jogo cadastrado.
+    <p *ngIf="itensFiltrados.length === 0" class="ion-text-center" style="color: var(--ion-color-medium);">
+      {{ mostrarMeus ? 'Você ainda não adicionou nenhum jogo.' : 'Nenhum jogo cadastrado.' }}
     </p>
 
-    <ion-card *ngFor="let jogo of itens">
+    <ion-card *ngFor="let jogo of itensFiltrados">
       <img *ngIf="jogo.foto_url" [src]="jogo.foto_url" [alt]="jogo.titulo" class="card-img">
       <div *ngIf="!jogo.foto_url" class="card-img-placeholder">
         <ion-icon name="game-controller-outline"></ion-icon>
@@ -41,14 +49,16 @@
           <ion-icon name="star-outline" slot="start"></ion-icon>
           Avaliar
         </ion-button>
-        <ion-button fill="clear" color="warning" (click)="editarJogo(jogo.id)">
-          <ion-icon name="pencil-outline" slot="start"></ion-icon>
-          Editar
-        </ion-button>
-        <ion-button fill="clear" color="danger" (click)="confirmarDelete(jogo)">
-          <ion-icon name="trash-outline" slot="start"></ion-icon>
-          Excluir
-        </ion-button>
+        <ng-container *ngIf="jogo.criado_por === usuarioId">
+          <ion-button fill="clear" color="warning" (click)="editarJogo(jogo.id)">
+            <ion-icon name="pencil-outline" slot="start"></ion-icon>
+            Editar
+          </ion-button>
+          <ion-button fill="clear" color="danger" (click)="confirmarDelete(jogo)">
+            <ion-icon name="trash-outline" slot="start"></ion-icon>
+            Excluir
+          </ion-button>
+        </ng-container>
       </div>
     </ion-card>
 

@@ -1,5 +1,6 @@
 from datetime import datetime
 from django.db import models
+from django.contrib.auth.models import User
 from .consts import PLATAFORMAS, GENEROS
 
 
@@ -10,6 +11,7 @@ class Jogo(models.Model):
     ano           = models.IntegerField()
     desenvolvedor = models.CharField(max_length=100)
     foto          = models.ImageField(upload_to='jogo/fotos', null=True, blank=True)
+    criado_por    = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='jogos')
     criado_em     = models.DateTimeField(auto_now_add=True)
     atualizado_em = models.DateTimeField(auto_now=True)
 

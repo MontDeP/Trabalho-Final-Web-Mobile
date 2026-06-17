@@ -5,8 +5,16 @@
         <ion-icon name="arrow-back-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title>⭐ Avaliações</ion-title>
+    <ion-title>
+      <div class="toolbar-logo">
+        <ion-icon name="star" style="color: #f0a500; font-size: 1.3rem;"></ion-icon>
+        <span class="gradient-title">Avaliações</span>
+      </div>
+    </ion-title>
     <ion-buttons slot="end">
+      <ion-button (click)="toggleMinhas()" [color]="mostrarMinhas ? 'primary' : 'medium'">
+        <ion-icon name="person-outline" slot="icon-only"></ion-icon>
+      </ion-button>
       <ion-button (click)="novaAvaliacao()">
         <ion-icon name="add-outline" slot="icon-only"></ion-icon>
       </ion-button>
@@ -18,11 +26,11 @@
 
   <div *ngIf="!carregando; else loading">
 
-    <p *ngIf="itens.length === 0" class="ion-text-center" style="color: var(--ion-color-medium);">
-      Nenhuma avaliação cadastrada.
+    <p *ngIf="itensFiltrados.length === 0" class="ion-text-center" style="color: var(--ion-color-medium);">
+      {{ mostrarMinhas ? 'Você ainda não fez nenhuma avaliação.' : 'Nenhuma avaliação cadastrada.' }}
     </p>
 
-    <ion-card *ngFor="let av of itens">
+    <ion-card *ngFor="let av of itensFiltrados">
       <ion-card-header>
         <ion-card-subtitle class="jogo-nome">🎮 {{ av.titulo_jogo }}</ion-card-subtitle>
         <ion-card-title>{{ av.titulo }}</ion-card-title>
@@ -38,7 +46,7 @@
         </p>
       </ion-card-content>
 
-      <div class="card-actions">
+      <div class="card-actions" *ngIf="av.usuario === usuarioId">
         <ion-button fill="clear" color="warning" (click)="editarAvaliacao(av.id)">
           <ion-icon name="pencil-outline" slot="start"></ion-icon>
           Editar

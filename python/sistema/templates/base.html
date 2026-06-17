@@ -16,12 +16,26 @@
         .btn-primary:hover { background-color: #2ea043; border-color: #2ea043; }
         .table { color: #c9d1d9; }
         .table-striped > tbody > tr:nth-of-type(odd) { background-color: #161b22; }
+        .logo-text {
+            background: linear-gradient(135deg, #58a6ff, #a371f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .navbar-brand img { filter: drop-shadow(0 0 6px rgba(88,166,255,0.4)); }
+        .form-control, .form-select { background-color: #0d1117 !important; border-color: #30363d !important; color: #c9d1d9 !important; }
+        .form-control:focus, .form-select:focus { border-color: #58a6ff !important; box-shadow: none !important; }
+        .form-control::file-selector-button { background-color: #238636; border-color: #238636; color: #fff; }
+        .logo-text { background: linear-gradient(135deg, #58a6ff, #a371f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
     </style>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container">
-        <a class="navbar-brand fw-bold" href="{% url 'listar_jogos' %}">🎮 Catálogo de Jogos</a>
+        <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="{% url 'listar_jogos' %}">
+            <img src="{% static 'img/logo.svg' %}" alt="Logo" height="32">
+            <span class="logo-text">Catálogo de Jogos</span>
+        </a>
         <div class="navbar-nav ms-auto">
             <a class="nav-link" href="{% url 'listar_jogos' %}">Jogos</a>
             <a class="nav-link" href="{% url 'listar_avaliacoes' %}">Avaliações</a>

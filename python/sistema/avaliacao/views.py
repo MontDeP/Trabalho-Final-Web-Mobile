@@ -3,6 +3,7 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from sistema.permissions import IsOwnerOrReadOnly
 
 from .models import Avaliacao
 from .forms import AvaliacaoForm
@@ -13,6 +14,16 @@ class ListarAvaliacoes(LoginRequiredMixin, ListView):
     model = Avaliacao
     template_name = 'avaliacao/listar.html'
     context_object_name = 'itens'
+
+    def get_queryset(self):
+        if self.request.GET.get('minhas'):
+            return Avaliacao.objects.filter(usuario=self.request.user)
+        return Avaliacao.objects.all()
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['minhas'] = bool(self.request.GET.get('minhas'))
+        return ctx
 
 
 class CadastrarAvaliacao(LoginRequiredMixin, CreateView):
@@ -32,11 +43,21 @@ class EditarAvaliacao(LoginRequiredMixin, UpdateView):
     template_name = 'avaliacao/editar.html'
     success_url = reverse_lazy('listar_avaliacoes')
 
+    def get_queryset(self):
+        if self.request.user.is_staff:
+            return Avaliacao.objects.all()
+        return Avaliacao.objects.filter(usuario=self.request.user)
+
 
 class DeletarAvaliacao(LoginRequiredMixin, DeleteView):
     model = Avaliacao
     template_name = 'avaliacao/deletar.html'
     success_url = reverse_lazy('listar_avaliacoes')
+
+    def get_queryset(self):
+        if self.request.user.is_staff:
+            return Avaliacao.objects.all()
+        return Avaliacao.objects.filter(usuario=self.request.user)
 
 
 class APIListarAvaliacoes(ListCreateAPIView):
@@ -55,4 +76,4 @@ class APIListarAvaliacoes(ListCreateAPIView):
 class APIAvaliacaoDetalhe(RetrieveUpdateDestroyAPIView):
     queryset = Avaliacao.objects.all()
     serializer_class = SerializadorAvaliacao
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]

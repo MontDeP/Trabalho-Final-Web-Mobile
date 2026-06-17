@@ -12,7 +12,16 @@ import { JogoService, Jogo } from '../../services/jogo.service';
 export class ListaPage implements OnInit {
   itens: Jogo[] = [];
   carregando = true;
+  usuarioId: number | null = null;
+  mostrarMeus = false;
   private token = '';
+
+  get itensFiltrados(): Jogo[] {
+    if (this.mostrarMeus) {
+      return this.itens.filter(j => j.criado_por === this.usuarioId);
+    }
+    return this.itens;
+  }
 
   constructor(
     private storage: Storage,
@@ -29,6 +38,8 @@ export class ListaPage implements OnInit {
       this.navCtrl.navigateRoot('/home');
       return;
     }
+    const usuario = await this.storage.get('usuario');
+    if (usuario) { this.usuarioId = usuario.id; }
     this.carregarJogos();
   }
 
@@ -38,6 +49,10 @@ export class ListaPage implements OnInit {
       next: (dados) => { this.itens = dados; this.carregando = false; },
       error: () => { this.carregando = false; }
     });
+  }
+
+  toggleMeus() {
+    this.mostrarMeus = !this.mostrarMeus;
   }
 
   verAvaliacoes() {

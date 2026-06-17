@@ -14,6 +14,7 @@ export interface Jogo {
   desenvolvedor: string;
   foto: string | null;
   foto_url: string | null;
+  criado_por: number | null;
 }
 
 export const PLATAFORMAS = [

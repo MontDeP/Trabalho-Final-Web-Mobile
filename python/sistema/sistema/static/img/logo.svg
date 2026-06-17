@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 40">
+  <defs>
+    <linearGradient id="lg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#58a6ff"/>
+      <stop offset="100%" stop-color="#a371f7"/>
+    </linearGradient>
+  </defs>
+  <!-- Controller body -->
+  <path d="M8,12 C4,12 2,16 2,22 C2,30 6,38 12,38 C16,38 18,34 24,34 L40,34 C46,34 48,38 52,38 C58,38 62,30 62,22 C62,16 60,12 56,12 Z" fill="url(#lg)"/>
+  <!-- D-pad vertical -->
+  <rect x="16" y="18" width="5" height="14" rx="1.5" fill="white" opacity="0.9"/>
+  <!-- D-pad horizontal -->
+  <rect x="12" y="22" width="13" height="5" rx="1.5" fill="white" opacity="0.9"/>
+  <!-- Button A -->
+  <circle cx="46" cy="22" r="3.5" fill="white" opacity="0.8"/>
+  <!-- Button B -->
+  <circle cx="50" cy="27" r="3.5" fill="white" opacity="0.6"/>
+  <!-- Button X -->
+  <circle cx="42" cy="17" r="3.5" fill="white" opacity="0.6"/>
+  <!-- Button Y -->
+  <circle cx="38" cy="22" r="3.5" fill="white" opacity="0.8"/>
+  <!-- Select -->
+  <rect x="27" y="21" width="5" height="3" rx="1.5" fill="white" opacity="0.5"/>
+  <!-- Start -->
+  <rect x="34" y="21" width="5" height="3" rx="1.5" fill="white" opacity="0.5"/>
+</svg>
